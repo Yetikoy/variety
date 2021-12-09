@@ -26,15 +26,48 @@ def connected_components(edges, nodes): # ([[1,2]], [1,2,3]) -> [[1,2], [3]]
         interm[alleg].add(member)
     return list(interm.values())
 
+from hypothesis import given, example
+from hypothesis.strategies import text, composite, integers, lists, booleans
+import hypothesis.strategies as st
+
+from collections import OrderedDict
+
+@composite
+def subset(draw, iterable, size):
+    unused = OrderedDict.fromkeys(iterable)
+    picks_remaining = size
+    assert len(unused) >= picks_remaining
+    result = []
+    while picks_remaining:
+        pick = draw(st.sampled_from(unused))
+        del unused[pick]
+        result.append(pick)
+        picks_remaining -= 1
+    return result
+
+@composite
+def edges_and_nodes(draw, elements=integers()):
+    nodes = draw(lists(elements, unique=True))
+    if len(nodes) < 2:
+        return [], nodes
+    edges = draw(st.lists(subset(nodes, size=2)))
+    return edges, nodes
+
 from util import flatten
-def test_nodes_are_the_same(e, n):
+@given(edges_and_nodes())
+def test_nodes_are_the_same(en):
+    e, n = en
     assert set(n) == set(flatten(connected_components(e,n)))
 
-def test_components_are_disjoint(e, n):
+@given(edges_and_nodes())
+def test_components_are_disjoint(en):
+    e, n = en
     new_nodes = list(flatten(connected_components(e,n)))
     assert len(new_nodes) == len(set(new_nodes))
 
-def test_components_are_traversible(e,n):
+@given(edges_and_nodes())
+def test_components_are_traversible(en):
+    e, n = en
     components_by_node = {}
     for component in connected_components(e,n):
         for node in component:
@@ -42,7 +75,9 @@ def test_components_are_traversible(e,n):
     for node1, node2 in e:
         assert components_by_node[node1] is components_by_node[node2]
 
-def test_unreachable_nodes_are_in_different_components(e,n):
+@given(edges_and_nodes())
+def test_unreachable_nodes_are_in_different_components(en):
+    e, n = en
     known_nodes = n
     first_nodes = [node1 for node1, node2 in e]
     second_nodes = [node2 for node1, node2 in e]
@@ -72,9 +107,8 @@ def test_unreachable_nodes_are_in_different_components(e,n):
     known_nodes_components = [components_by_node[node] for node in known_nodes]
     assert len(set(known_nodes)) == len(set(known_nodes_components))
 
-
 if __name__ == "__main__":
-    test_nodes_are_the_same([[1,2]], [1,2,3])
-    test_components_are_disjoint([[1,2]], [1,2,3])
-    test_components_are_traversible([[1,2]], [1,2,3])
-    test_unreachable_nodes_are_in_different_components([[1,2]], [1,2,3])
+    test_nodes_are_the_same()
+    test_components_are_disjoint()
+    test_components_are_traversible()
+    test_unreachable_nodes_are_in_different_components()
