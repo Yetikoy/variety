@@ -1,0 +1,10 @@
+version: "3.3"
+
+services:
+  variety_debug:
+    build:
+      context: .
+    command: "test"
+    volumes:
+      - ./src:/app/src
+      - ./test:/app/test
