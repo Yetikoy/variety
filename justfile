@@ -9,7 +9,7 @@ infer-test file:
     just test {{replace(without_extension(file), "src", "test")}}_test.py
 # watch /src and run unit tests on file changes
 watch:
-    watchmedo shell-command --patterns="*.py" --drop --recursive --command='bash -c "clear; just infer-test \"$watch_src_path\""' /common/src
+    watchmedo shell-command --patterns="*.py" --drop --recursive --command='bash -c "clear; just infer-test \"$watch_src_path\""' /app/src
 # shell access
 bash:
     bash
