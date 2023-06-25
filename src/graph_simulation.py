@@ -41,6 +41,7 @@ class GraphSimulation(Simulation):
                     label_name = f'${name}$'
             plt.plot(xs, dataline, label=label_name)
         plt.legend()
+        return plt
 
 err_ext = lambda xs, state, err: err
 xs_ext = lambda index: lambda xs, state, err: xs[index]

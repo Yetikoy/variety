@@ -3,6 +3,8 @@ from dataclasses import dataclass, field
 from collections.abc import Callable
 from copy import deepcopy
 
+# TODO: move lens business here and according tests too
+
 @dataclass
 class Simulation:
     name: str
