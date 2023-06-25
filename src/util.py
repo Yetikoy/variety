@@ -1,6 +1,7 @@
 import functools
 import operator
 import itertools
+from collections import defaultdict
 
 flatten = itertools.chain.from_iterable
 
