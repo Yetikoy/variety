@@ -72,7 +72,7 @@ class Capacitor(Element):
     def commit(self, v, i, state, dt):
         #print('C0:', v, i, state)
         return state + i * dt
-    def get_mismatch(self, v, state): return self.value * state - v    
+    def get_mismatch(self, v, state): return state / self.value - v    
     
 class Jumper(Element):
     def __init__(self, counts, value, name=''):
